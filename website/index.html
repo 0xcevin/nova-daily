@@ -67,10 +67,10 @@
                         <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span>
                         <span class="text-nova-muted">连接中...</span>
                     </div>
-                    <a href="#subscribe" class="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-nova-cta hover:bg-orange-600 text-white rounded-full font-medium text-sm transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/25">
-                        <i data-lucide="bell" class="w-4 h-4"></i>
-                        订阅
-                    </a>
+                    <button id="wallet-btn" onclick="connectWallet()" class="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:opacity-90 text-white rounded-full font-medium text-sm transition-all duration-200">
+                        <i data-lucide="wallet" class="w-4 h-4"></i>
+                        <span id="wallet-text">连接钱包</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -357,6 +357,8 @@
         let audioPlayer = new Audio();
         let isPlaying = false;
         let suiClient;
+        let walletAddress = null;
+        let novaIdentity = null;
 
         lucide.createIcons();
 
@@ -365,6 +367,7 @@
             updateConnectionStatus('connected');
             loadEpisodes();
             loadIdentity();
+            checkWallet();
         } catch (e) {
             console.error('Failed to initialize Sui client:', e);
             updateConnectionStatus('error');
@@ -380,6 +383,47 @@
             }
         }
 
+        // Wallet Connection
+        async function checkWallet() {
+            if (window.sui) {
+                try {
+                    const accounts = await window.sui.getAccounts();
+                    if (accounts && accounts.length > 0) {
+                        walletAddress = accounts[0];
+                        updateWalletUI();
+                    }
+                } catch (e) {
+                    console.log('Wallet not connected');
+                }
+            }
+        }
+
+        async function connectWallet() {
+            if (!window.sui) {
+                alert('请安装 Sui Wallet 浏览器扩展');
+                window.open('https://chrome.google.com/webstore/detail/sui-wallet/opcgpfmipidbgpenhmajoajpbobppdil', '_blank');
+                return;
+            }
+            try {
+                const accounts = await window.sui.requestAccounts();
+                if (accounts && accounts.length > 0) {
+                    walletAddress = accounts[0];
+                    updateWalletUI();
+                    alert('钱包已连接: ' + walletAddress.slice(0, 10) + '...');
+                }
+            } catch (e) {
+                console.error('Failed to connect wallet:', e);
+                alert('连接失败: ' + e.message);
+            }
+        }
+
+        function updateWalletUI() {
+            const text = document.getElementById('wallet-text');
+            if (walletAddress) {
+                text.textContent = walletAddress.slice(0, 6) + '...' + walletAddress.slice(-4);
+            }
+        }
+
         async function loadIdentity() {
             try {
                 const identity = await suiClient.getObject({
@@ -387,9 +431,9 @@
                     options: { showContent: true }
                 });
                 if (identity.data) {
-                    const fields = identity.data.content.fields;
-                    if (fields.bio) {
-                        document.getElementById('nova-bio').textContent = fields.bio;
+                    novaIdentity = identity.data.content.fields;
+                    if (novaIdentity.bio) {
+                        document.getElementById('nova-bio').textContent = novaIdentity.bio;
                     }
                 }
             } catch (e) {
