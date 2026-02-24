@@ -1,114 +1,120 @@
-# Nova Daily - AI 驱动的每日播客
+# Nova Daily - Sui 去中心化播客
 
-Nova 的每日播客项目，包含 Sui 链上合约和官方网站。
+基于 Sui 区块链和 Walrus 存储的去中心化播客平台。
 
 ## 项目结构
 
 ```
 .
-├── Move.toml              # 包配置
+├── Move.toml              # Sui 合约配置
 ├── sources/
-│   └── nova_daily.move    # 主合约
+│   └── nova_daily.move    # 播客智能合约
 ├── tests/
-│   └── nova_daily_tests.move  # 测试
-└── website/
-    └── index.html         # 播客官网
+│   └── nova_daily_tests.move
+└── webapp/                # Next.js dApp
+    ├── app/               # 页面路由
+    ├── components/        # React 组件
+    ├── lib/              # 工具函数和配置
+    └── package.json      # 依赖管理
 ```
 
-## 合约功能
+## 智能合约
+
+### 部署信息 (Testnet)
+
+| 对象 | 地址 |
+|------|------|
+| Package | `0x64c8a15b8b135522d8af8e658817ced5a447a35f59ffa7784daac5ac27f7f8c9` |
+| Registry | `0xbde6dae4a2ad1d51e01733ac8fa248bbe4350825d9237ecbf85919a9fb47c4ff` |
+| Identity | `0xa2b87b13dba09113f7e6c1a964f45a4ca1d9e3af5bcc2d4f7704cdde08450677` |
 
 ### 核心对象
 
-- **NovaIdentity**: Nova 的身份信息（名称、简介、头像 Blob、管理员地址）
-- **DailyEpisode**: 每日播客条目（标题、摘要、Walrus Blob、标签、时长）
-- **EpisodeRegistry**: 全局注册表（日期索引、总数统计）
+- **NovaIdentity**: Nova 身份信息（名称、简介、头像、管理员）
+- **DailyEpisode**: 播客条目（标题、摘要、Walrus Blob、标签、时长）
+- **EpisodeRegistry**: 全局注册表（日期索引、ID 映射）
 
-### 事件
+## Web App
 
-- `NovaIdentityCreated`: 身份创建
-- `EpisodePublished`: 新播客发布
+基于 Next.js 14 + Sui dApp Kit 构建的现代 dApp。
 
-## 快速开始
+### 技术栈
 
-### 安装依赖
+- **框架**: Next.js 14 (App Router)
+- **语言**: TypeScript
+- **样式**: Tailwind CSS
+- **Web3**: @mysten/dapp-kit, @mysten/sui
+- **状态**: TanStack Query (React Query)
 
-需要安装 Sui CLI:
-```bash
-cargo install --locked --git https://github.com/MystenLabs/sui --branch testnet sui
-```
-
-### 构建与测试
+### 本地开发
 
 ```bash
-# 构建
-sui move build
-
-# 测试
-sui move test
+cd webapp
+npm install
+npm run dev
+# 访问 http://localhost:3000
 ```
 
-### 部署
+### 部署到 Vercel
+
+1. Fork 本仓库
+2. 在 Vercel 导入项目
+3. 设置根目录为 `webapp`
+4. 部署完成！
+
+或者使用 Vercel CLI:
 
 ```bash
-# 切换到目标网络
-sui client switch --env testnet  # 或 mainnet
-
-# 发布合约
-sui client publish --gas-budget 50000000
+cd webapp
+vercel --prod
 ```
 
-### 创建 Nova 身份
+### 环境变量
+
+创建 `webapp/.env.local`:
+
+```env
+NEXT_PUBLIC_SUI_NETWORK=testnet
+```
+
+## 合约交互
+
+### 创建身份 (仅一次)
 
 ```bash
 sui client call \
-  --package <PACKAGE_ID> \
+  --package 0x64c8a15b8b135522d8af8e658817ced5a447a35f59ffa7784daac5ac27f7f8c9 \
   --module nova_daily \
   --function create_identity \
-  --args "Nova" "AI Assistant & Daily Podcaster" "<avatar_walrus_blob_id>"
+  --args "Nova" "AI Assistant & Daily Podcaster" "<avatar_blob_id>"
 ```
 
 ### 发布播客
 
 ```bash
 sui client call \
-  --package <PACKAGE_ID> \
+  --package 0x64c8a15b8b135522d8af8e658817ced5a447a35f59ffa7784daac5ac27f7f8c9 \
   --module nova_daily \
   --function publish_episode \
   --args \
-    <REGISTRY_OBJECT_ID> \
-    <IDENTITY_OBJECT_ID> \
+    0xbde6dae4a2ad1d51e01733ac8fa248bbe4350825d9237ecbf85919a9fb47c4ff \
+    0xa2b87b13dba09113f7e6c1a964f45a4ca1d9e3af5bcc2d4f7704cdde08450677 \
     "2026-02-24" \
-    "Nova Daily #1: Hello World" \
+    "Nova Daily #1" \
     "Today we explore..." \
-    "<audio_walrus_blob_id>" \
-    '["AI", "Tech", "Daily"]' \
+    "<walrus_blob_id>" \
+    '["AI", "Web3"]' \
     300
 ```
 
-## 查询函数
+## 功能特性
 
-- `get_total_episodes(registry)`: 获取总期数
-- `get_episode_id_by_date(registry, date)`: 按日期查 episode_id
-- `get_episode_object_id(registry, episode_id)`: 查对象 ID
-- `has_episode_on_date(registry, date)`: 检查某天是否有发布
-
-## 播客官网
-
-位于 `website/` 目录，使用 **UI UX Pro Max** 设计系统：
-
-- 🎨 **设计风格**: Dark Mode (OLED) + Glassmorphism
-- 🎯 **配色方案**: 深紫主色 (#1E1B4B) + 橙色 CTA (#F97316)
-- ✍️ **字体搭配**: Newsreader (标题) + Roboto (正文)
-- 📱 **响应式**: 支持移动端到桌面端
-- 🎵 **特色**: 音频波形动画、固定播放器栏
-
-### 本地预览
-
-```bash
-cd website
-python3 -m http.server 8080
-# 访问 http://localhost:8080
-```
+- 🔗 **钱包连接**: Sui Wallet 集成
+- 📡 **实时数据**: 从链上读取播客内容
+- 🎵 **音频播放**: Walrus 去中心化存储
+- 👤 **管理员模式**: 自动检测管理员身份
+- 📱 **响应式设计**: 支持移动端
+- 🎨 **深色主题**: OLED 友好的深色模式
 
 ## License
 
