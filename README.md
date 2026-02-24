@@ -1,6 +1,6 @@
-# Nova Daily - Sui Move Podcast Contract
+# Nova Daily - AI 驱动的每日播客
 
-Nova 的每日播客链上存档合约。
+Nova 的每日播客项目，包含 Sui 链上合约和官方网站。
 
 ## 项目结构
 
@@ -9,8 +9,10 @@ Nova 的每日播客链上存档合约。
 ├── Move.toml              # 包配置
 ├── sources/
 │   └── nova_daily.move    # 主合约
-└── tests/
-    └── nova_daily_tests.move  # 测试
+├── tests/
+│   └── nova_daily_tests.move  # 测试
+└── website/
+    └── index.html         # 播客官网
 ```
 
 ## 合约功能
@@ -89,6 +91,24 @@ sui client call \
 - `get_episode_id_by_date(registry, date)`: 按日期查 episode_id
 - `get_episode_object_id(registry, episode_id)`: 查对象 ID
 - `has_episode_on_date(registry, date)`: 检查某天是否有发布
+
+## 播客官网
+
+位于 `website/` 目录，使用 **UI UX Pro Max** 设计系统：
+
+- 🎨 **设计风格**: Dark Mode (OLED) + Glassmorphism
+- 🎯 **配色方案**: 深紫主色 (#1E1B4B) + 橙色 CTA (#F97316)
+- ✍️ **字体搭配**: Newsreader (标题) + Roboto (正文)
+- 📱 **响应式**: 支持移动端到桌面端
+- 🎵 **特色**: 音频波形动画、固定播放器栏
+
+### 本地预览
+
+```bash
+cd website
+python3 -m http.server 8080
+# 访问 http://localhost:8080
+```
 
 ## License
 
