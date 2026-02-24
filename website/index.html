@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Daily | AI 驱动的每日播客</title>
+    <meta name="description" content="Nova Daily - 由 AI 驱动的每日播客，探索科技、Web3、AI 和未来趋势">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'nova-primary': '#1E1B4B',
+                        'nova-secondary': '#312E81',
+                        'nova-cta': '#F97316',
+                        'nova-bg': '#0F0F23',
+                        'nova-text': '#F8FAFC',
+                        'nova-muted': '#94A3B8',
+                        'nova-glass': 'rgba(255, 255, 255, 0.08)',
+                    },
+                    fontFamily: {
+                        'display': ['Newsreader', 'serif'],
+                        'body': ['Roboto', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #0F0F23;
+            color: #F8FAFC;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .glass-nav {
+            background: rgba(15, 15, 35, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F97316 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .audio-wave span {
+            width: 4px;
+            background: linear-gradient(to top, #F97316, #FBBF24);
+            border-radius: 2px;
+            animation: wave 1.2s ease-in-out infinite;
+        }
+        
+        @keyframes wave {
+            0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+        
+        .episode-card {
+            transition: all 0.3s ease;
+        }
+        
+        .episode-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15);
+        }
+        
+        .play-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(249, 115, 22, 0.5);
+        }
+        
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(249, 115, 22, 0.15) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Navigation -->
+    <nav class="glass-nav fixed top-0 left-0 right-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-nova-cta to-yellow-500 flex items-center justify-center">
+                        <i data-lucide="radio" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-display font-bold text-xl tracking-tight">Nova Daily</span>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#episodes" class="text-nova-muted hover:text-nova-text transition-colors duration-200 text-sm font-medium">最新节目</a>
+                    <a href="#about" class="text-nova-muted hover:text-nova-text transition-colors duration-200 text-sm font-medium">关于</a>
+                    <a href="#subscribe" class="text-nova-muted hover:text-nova-text transition-colors duration-200 text-sm font-medium">订阅</a>
+                </div>
+                
+                <a href="#subscribe" class="hidden sm:flex items-center gap-2 px-5 py-2.5 bg-nova-cta hover:bg-orange-600 text-white rounded-full font-medium text-sm transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/25">
+                    <i data-lucide="bell" class="w-4 h-4"></i>
+                    订阅播客
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+        <div class="hero-glow"></div>
+        
+        <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-nova-primary/30 rounded-full blur-3xl"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-nova-secondary/20 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="flex justify-center mb-8">
+                <div class="glass-card rounded-2xl px-6 py-4 flex items-center gap-4">
+                    <div class="audio-wave flex items-center gap-1 h-6">
+                        <span class="h-2"></span>
+                        <span class="h-4"></span>
+                        <span class="h-6"></span>
+                        <span class="h-3"></span>
+                        <span class="h-5"></span>
+                    </div>
+                    <span class="text-nova-cta font-medium text-sm">正在直播</span>
+                </div>
+            </div>
+            
+            <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl font-bold mb-6 leading-tight">
+                <span class="gradient-text">AI 驱动的</span><br>
+                <span class="text-nova-text">每日播客</span>
+            </h1>
+            
+            <p class="text-nova-muted text-lg sm:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+                探索科技前沿、Web3 生态、AI 趋势和数字未来。<br class="hidden sm:block">
+                每天 10 分钟，与世界同步。
+            </p>
+            
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+                <button class="play-btn flex items-center gap-3 px-8 py-4 bg-nova-cta hover:bg-orange-600 text-white rounded-full font-semibold text-lg transition-all duration-200 w-full sm:w-auto justify-center">
+                    <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                    收听最新一期
+                </button>
+                <a href="#episodes" class="flex items-center gap-3 px-8 py-4 glass-card hover:bg-white/10 text-nova-text rounded-full font-semibold text-lg transition-all duration-200 w-full sm:w-auto justify-center">
+                    <i data-lucide="list" class="w-5 h-5"></i>
+                    浏览节目
+                </a>
+            </div>
+            
+            <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+                <div class="text-center">
+                    <div class="font-display text-3xl sm:text-4xl font-bold text-nova-text">128</div>
+                    <div class="text-nova-muted text-sm mt-1">期节目</div>
+                </div>
+                <div class="w-px h-12 bg-white/10 hidden sm:block"></div>
+                <div class="text-center">
+                    <div class="font-display text-3xl sm:text-4xl font-bold text-nova-text">50K+</div>
+                    <div class="text-nova-muted text-sm mt-1">订阅者</div>
+                </div>
+                <div class="w-px h-12 bg-white/10 hidden sm:block"></div>
+                <div class="text-center">
+                    <div class="font-display text-3xl sm:text-4xl font-bold text-nova-text">4.9</div>
+                    <div class="text-nova-muted text-sm mt-1">评分</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Episode Section -->
+    <section id="episodes" class="py-20 sm:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-12 gap-4">
+                <div>
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-nova-text mb-2">最新节目</h2>
+                    <p class="text-nova-muted">探索最新的科技趋势和深度洞察</p>
+                </div>
+                <a href="#" class="flex items-center gap-2 text-nova-cta hover:text-orange-400 font-medium transition-colors">
+                    查看全部
+                    <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+            
+            <div class="glass-card rounded-3xl p-6 sm:p-8 mb-8 episode-card">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="lg:w-1/3">
+                        <div class="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-nova-primary to-nova-secondary">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <i data-lucide="mic" class="w-20 h-20 text-white/30"></i>
+                            </div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                            <div class="absolute bottom-4 left-4 right-4">
+                                <span class="inline-block px-3 py-1 bg-nova-cta text-white text-xs font-semibold rounded-full mb-2">最新</span>
+                                <div class="text-white/80 text-sm">EP.128</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:w-2/3 flex flex-col justify-center">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-nova-cta text-sm font-medium">2025.02.25</span>
+                            <span class="w-1 h-1 rounded-full bg-nova-muted"></span>
+                            <span class="text-nova-muted text-sm">32 分钟</span>
+                        </div>
+                        <h3 class="font-display text-2xl sm:text-3xl font-bold text-nova-text mb-4">
+                            Sui 生态深度解析：Walrus 存储协议与去中心化播客的无限可能
+                        </h3>
+                        <p class="text-nova-muted mb-6 leading-relaxed">
+                            本期节目深入探讨 Sui 区块链的最新进展，重点分析 Walrus 去中心化存储协议如何改变内容分发方式。我们还将分享 Nova Daily 如何利用 Walrus 实现播客内容的链上存储和分发。
+                        </p>
+                        <div class="flex flex-wrap items-center gap-3 mb-6">
+                            <span class="px-3 py-1 glass-card rounded-full text-xs text-nova-muted">Web3</span>
+                            <span class="px-3 py-1 glass-card rounded-full text-xs text-nova-muted">Sui</span>
+                            <span class="px-3 py-1 glass-card rounded-full text-xs text-nova-muted">Storage</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <button class="play-btn flex items-center gap-2 px-6 py-3 bg-nova-cta hover:bg-orange-600 text-white rounded-full font-semibold transition-all duration-200">
+                                <i data-lucide="play" class="w-5 h-5 fill-current"></i>
+                                播放
+                            </button>
+                            <button class="flex items-center gap-2 px-6 py-3 glass-card hover:bg-white/10 text-nova-text rounded-full font-semibold transition-all duration-200">
+                                <i data-lucide="download" class="w-5 h-5"></i>
+                                下载
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="glass-card rounded-2xl p-5 episode-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-nova-primary/50 flex items-center justify-center">
+                            <i data-lucide="cpu" class="w-6 h-6 text-nova-cta"></i>
+                        </div>
+                        <span class="text-nova-muted text-sm">EP.127</span>
+                    </div>
+                    <h4 class="font-display text-lg font-bold text-nova-text mb-2">AI Agent 的未来</h4>
+                    <p class="text-nova-muted text-sm mb-4 line-clamp-2">探讨 AI Agent 的技术演进，以及它们如何改变我们的工作方式...</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-nova-muted text-xs">28 分钟</span>
+                        <button class="w-10 h-10 rounded-full glass-card hover:bg-nova-cta hover:text-white flex items-center justify-center transition-all duration-200">
+                            <i data-lucide="play" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-5 episode-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-nova-secondary/50 flex items-center justify-center">
+                            <i data-lucide="coins" class="w-6 h-6 text-yellow-400"></i>
+                        </div>
+                        <span class="text-nova-muted text-sm">EP.126</span>
+                    </div>
+                    <h4 class="font-display text-lg font-bold text-nova-text mb-2">DeFi 2.0 协议解析</h4>
+                    <p class="text-nova-muted text-sm mb-4 line-clamp-2">深度分析 DeFi 协议的演进，从 Uniswap v4 到新兴的流动性机制...</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-nova-muted text-xs">35 分钟</span>
+                        <button class="w-10 h-10 rounded-full glass-card hover:bg-nova-cta hover:text-white flex items-center justify-center transition-all duration-200">
+                            <i data-lucide="play" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-5 episode-card">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-12 h-12 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                            <i data-lucide="zap" class="w-6 h-6 text-purple-400"></i>
+                        </div>
+                        <span class="text-nova-muted text-sm">EP.125</span>
+                    </div>
+                    <h4 class="font-display text-lg font-bold text-nova-text mb-2">Solana 生态周报</h4>
+                    <p class="text-nova-muted text-sm mb-4 line-clamp-2">Solana 网络性能的新里程碑，Firedancer 客户端带来的改变...</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-nova-muted text-xs">24 分钟</span>
+                        <button class="w-10 h-10 rounded-full glass-card hover:bg-nova-cta hover:text-white flex items-center justify-center transition-all duration-200">
+                            <i data-lucide="play" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Topics Section -->
+    <section class="py-20 sm:py-32 bg-gradient-to-b from-transparent to-nova-primary/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-display text-3xl sm:text-4xl font-bold text-nova-text mb-4">内容主题</h2>
+                <p class="text-nova-muted max-w-2xl mx-auto">涵盖科技、区块链、AI 和未来趋势的多个维度</p>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <div class="glass-card rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-blue-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="bot" class="w-7 h-7 text-blue-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-nova-text mb-1">人工智能</h3>
+                    <p class="text-nova-muted text-sm">42 期</p>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-purple-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="blocks" class="w-7 h-7 text-purple-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-nova-text mb-1">区块链</h3>
+                    <p class="text-nova-muted text-sm">56 期</p>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-green-500/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="code-2" class="w-7 h-7 text-green-400"></i>
+                    </div>
+                    <h3 class="font-semibold text-nova-text mb-1">开发者工具</h3>
+                    <p class="text-nova-muted text-sm">18 期</p>
+                </div>
+                
+                <div class="glass-card rounded-2xl p-6 text-center hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                    <div class="w-14 h-14 mx-auto mb-4 rounded-2xl bg-nova-cta/20 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <i data-lucide="trending-up" class="w-7 h-7 text-nova-cta"></i>
+                    </div>
+                    <h3 class="font-semibold text-nova-text mb-1">行业趋势</h3>
+                    <p class="text-nova-muted text-sm">12 期</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 sm:py-32">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card rounded-3xl p-8 sm:p-12">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="lg:w-1/2">
+                        <div class="relative">
+                            <div class="w-48 h-48 sm:w-64 sm:h-64 mx-auto rounded-3xl bg-gradient-to-br from-nova-cta to-yellow-500 flex items-center justify-center">
+                                <i data-lucide="sparkles" class="w-24 h-24 sm:w-32 sm:h-32 text-white/80"></i>
+                            </div>
+                            <div class="absolute -top-4 -right-4 w-20 h-20 rounded-2xl glass-card flex items-center justify-center">
+                                <i data-lucide="headphones" class="w-10 h-10 text-nova-cta"></i>
+                            </div>
+                            <div class="absolute -bottom-4 -left-4 w-16 h-16 rounded-xl bg-nova-primary flex items-center justify-center">
+                                <i data-lucide="mic-2" class="w-8 h-8 text-white"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:w-1/2">
+                        <h2 class="font-display text-3xl sm:text-4xl font-bold text-nova-text mb-6">关于 Nova Daily</h2>
+                        <p class="text-nova-muted mb-6 leading-relaxed">
+                            Nova Daily 是由 AI 助手 Nova 主持的每日播客节目。我们专注于探索科技前沿、Web3 生态、人工智能发展以及数字未来的无限可能。
+                        </p>
+                        <p class="text-nova-muted mb-8 leading-relaxed">
+                            每期节目精心制作，为你提供深度洞察和实用信息。无论你是开发者、投资者还是科技爱好者，都能在这里找到有价值的内容。
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+                                <span class="text-nova-text">每日更新</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+                                <span class="text-nova-text">深度内容</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="check-circle" class="w-5 h-5 text-green-400"></i>
+                                <span class="text-nova-text">AI 驱动</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subscribe Section -->
+    <section id="subscribe" class="py-20 sm:py-32">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="font-display text-3xl sm:text-4xl font-bold text-nova-text mb-4">订阅 Nova Daily</h2>
+            <p class="text-nova-muted mb-10">在以下平台关注我们的播客，获取最新节目推送</p>
+            
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
+                <a href="#" class="glass-card rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
+                    <i data-lucide="podcast" class="w-8 h-8 mx-auto mb-3 text-purple-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-nova-text font-medium text-sm">Apple Podcasts</span>
+                </a>
+                <a href="#" class="glass-card rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
+                    <i data-lucide="rss" class="w-8 h-8 mx-auto mb-3 text-orange-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-nova-text font-medium text-sm">RSS Feed</span>
+                </a>
+                <a href="#" class="glass-card rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
+                    <i data-lucide="youtube" class="w-8 h-8 mx-auto mb-3 text-red-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-nova-text font-medium text-sm">YouTube</span>
+                </a>
+                <a href="#" class="glass-card rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group">
+                    <i data-lucide="disc" class="w-8 h-8 mx-auto mb-3 text-green-400 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-nova-text font-medium text-sm">Spotify</span>
+                </a>
+            </div>
+            
+            <div class="glass-card rounded-2xl p-6 sm:p-8">
+                <h3 class="font-display text-xl font-bold text-nova-text mb-2">邮件订阅</h3>
+                <p class="text-nova-muted text-sm mb-6">获取新节目通知和独家内容</p>
+                <form class="flex flex-col sm:flex-row gap-3">
+                    <input type="email" placeholder="输入你的邮箱" class="flex-1 px-5 py-3 bg-white/5 border border-white/10 rounded-xl text-nova-text placeholder-nova-muted focus:outline-none focus:border-nova-cta transition-colors">
+                    <button type="submit" class="px-6 py-3 bg-nova-cta hover:bg-orange-600 text-white rounded-xl font-semibold transition-all duration-200 hover:shadow-lg hover:shadow-orange-500/25">
+                        订阅
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/5 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-nova-cta to-yellow-500 flex items-center justify-center">
+                        <i data-lucide="radio" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="font-display font-bold text-lg">Nova Daily</span>
+                </div>
+                
+                <div class="flex items-center gap-6">
+                    <a href="#" class="text-nova-muted hover:text-nova-text transition-colors">
+                        <i data-lucide="twitter" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="text-nova-muted hover:text-nova-text transition-colors">
+                        <i data-lucide="github" class="w-5 h-5"></i>
+                    </a>
+                    <a href="#" class="text-nova-muted hover:text-nova-text transition-colors">
+                        <i data-lucide="message-circle" class="w-5 h-5"></i>
+                    </a>
+                </div>
+                
+                <p class="text-nova-muted text-sm">
+                    © 2025 Nova Daily. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Player Bar -->
+    <div class="fixed bottom-0 left-0 right-0 glass-nav border-t border-white/10 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+            <div class="flex items-center justify-between gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-nova-primary to-nova-secondary flex items-center justify-center hidden sm:flex">
+                        <i data-lucide="mic" class="w-6 h-6 text-white/60"></i>
+                    </div>
+                    <div>
+                        <div class="font-medium text-nova-text text-sm">Sui 生态深度解析...</div>
+                        <div class="text-nova-muted text-xs">EP.128</div>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <button class="text-nova-muted hover:text-nova-text transition-colors">
+                        <i data-lucide="skip-back" class="w-5 h-5"></i>
+                    </button>
+                    <button class="w-10 h-10 rounded-full bg-nova-cta hover:bg-orange-600 flex items-center justify-center text-white transition-all duration-200 hover:scale-105">
+                        <i data-lucide="pause" class="w-5 h-5 fill-current"></i>
+                    </button>
+                    <button class="text-nova-muted hover:text-nova-text transition-colors">
+                        <i data-lucide="skip-forward" class="w-5 h-5"></i>
+                    </button>
+                </div>
+                
+                <div class="hidden sm:flex items-center gap-3 flex-1 max-w-xs">
+                    <span class="text-nova-muted text-xs">12:34</span>
+                    <div class="flex-1 h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div class="w-2/5 h-full bg-nova-cta rounded-full"></div>
+                    </div>
+                    <span class="text-nova-muted text-xs">32:15</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    <button class="text-nova-muted hover:text-nova-text transition-colors">
+                        <i data-lucide="volume-2" class="w-5 h-5"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bottom padding for player bar -->
+    <div class="h-20"></div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
