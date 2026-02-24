@@ -1,0 +1,62 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 248, 250, 252;
+  --background-rgb: 15, 15, 35;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: 'Roboto', sans-serif;
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl;
+  }
+  
+  .glass-nav {
+    @apply bg-nova-bg/80 backdrop-blur-xl border-b border-white/5;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-to-br from-white to-nova-cta bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .audio-wave span {
+    @apply w-1 rounded-sm;
+    background: linear-gradient(to top, #F97316, #FBBF24);
+    animation: wave 1.2s ease-in-out infinite;
+  }
+  
+  @keyframes wave {
+    0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+    50% { transform: scaleY(1); opacity: 1; }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
