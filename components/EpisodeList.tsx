@@ -2,6 +2,7 @@
 
 import { RefreshCw, Play, ExternalLink, Mic, AlertCircle } from 'lucide-react';
 import { Episode } from '@/lib/config';
+import { PublishButton } from './PublishButton';
 
 interface EpisodeListProps {
   episodes: Episode[];
@@ -28,14 +29,17 @@ export function EpisodeList({ episodes, loading, error, onRefresh, onPlay }: Epi
             </h2>
             <p className="text-nova-muted">从 Sui 区块链实时读取的播客内容</p>
           </div>
-          <button
-            onClick={onRefresh}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 glass-card hover:bg-white/10 text-nova-text rounded-full text-sm font-medium transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            刷新
-          </button>
+          <div className="flex items-center gap-2">
+            <PublishButton onSuccess={onRefresh} />
+            <button
+              onClick={onRefresh}
+              disabled={loading}
+              className="flex items-center gap-2 px-4 py-2 glass-card hover:bg-white/10 text-nova-text rounded-full text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+              刷新
+            </button>
+          </div>
         </div>
 
         {/* Loading State */}
