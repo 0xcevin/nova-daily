@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useCurrentAccount, useSuiClient } from '@mysten/dapp-kit';
+import { useCurrentAccount } from '@mysten/dapp-kit-react';
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
 import { EpisodeList } from '@/components/EpisodeList';
@@ -10,9 +10,9 @@ import { About } from '@/components/About';
 import { Footer } from '@/components/Footer';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { CONFIG, Episode, NovaIdentity } from '@/lib/config';
+import { dAppKit } from '@/lib/dapp-kit';
 
 export default function Home() {
-  const suiClient = useSuiClient();
   const currentAccount = useCurrentAccount();
   
   const [episodes, setEpisodes] = useState<Episode[]>([]);
@@ -40,7 +40,8 @@ export default function Home() {
   }
 
   async function loadEpisodes() {
-    const registry = await suiClient.getObject({
+    const client = dAppKit.getClient();
+    const registry = await client.getObject({
       id: CONFIG.registryId,
       options: { showContent: true },
     });
@@ -60,7 +61,7 @@ export default function Home() {
       const episodeId = entry.value;
       
       try {
-        const episodeObj = await suiClient.getObject({
+        const episodeObj = await client.getObject({
           id: episodeId,
           options: { showContent: true },
         });
@@ -98,7 +99,8 @@ export default function Home() {
   }
 
   async function loadIdentity() {
-    const identity = await suiClient.getObject({
+    const client = dAppKit.getClient();
+    const identity = await client.getObject({
       id: CONFIG.identityId,
       options: { showContent: true },
     });
@@ -121,7 +123,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Navbar identity={identity} currentAccount={currentAccount} />
+      <Navbar identity={identity} />
       
       <main>
         <Hero 

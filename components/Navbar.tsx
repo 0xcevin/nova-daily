@@ -1,15 +1,15 @@
 'use client';
 
-import { ConnectButton } from '@mysten/dapp-kit';
+import { ConnectButton, useCurrentAccount } from '@mysten/dapp-kit-react';
 import { Radio } from 'lucide-react';
 import { NovaIdentity } from '@/lib/config';
 
 interface NavbarProps {
   identity: NovaIdentity | null;
-  currentAccount: { address: string } | null;
 }
 
-export function Navbar({ identity, currentAccount }: NavbarProps) {
+export function Navbar({ identity }: NavbarProps) {
+  const currentAccount = useCurrentAccount();
   const isAdmin = identity && currentAccount?.address === identity.admin;
 
   return (
@@ -37,10 +37,7 @@ export function Navbar({ identity, currentAccount }: NavbarProps) {
               </span>
             )}
 
-            <ConnectButton
-              connectText="连接钱包"
-              className="!bg-gradient-to-r !from-blue-600 !to-purple-600 !text-white !px-4 !py-2 !rounded-full !font-medium !text-sm !border-0 !hover:opacity-90"
-            />
+            <ConnectButton />
           </div>
         </div>
       </div>
