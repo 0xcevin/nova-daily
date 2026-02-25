@@ -10,8 +10,7 @@ export const dAppKit = createDAppKit({
   networks: ['testnet', 'mainnet'],
   defaultNetwork: 'testnet',
   createClient: (network) =>
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    new SuiGrpcClient({ network, baseUrl: GRPC_URLS[network] }) as any,
+    new SuiGrpcClient({ network, baseUrl: GRPC_URLS[network] }),
   autoConnect: true,
 });
 
