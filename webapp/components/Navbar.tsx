@@ -39,7 +39,6 @@ export function Navbar({ identity, currentAccount }: NavbarProps) {
 
             <ConnectButton
               connectText="连接钱包"
-              connectedText="已连接"
               className="!bg-gradient-to-r !from-blue-600 !to-purple-600 !text-white !px-4 !py-2 !rounded-full !font-medium !text-sm !border-0 !hover:opacity-90"
             />
           </div>
