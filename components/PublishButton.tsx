@@ -1,7 +1,9 @@
 'use client';
 
+'use client';
+
 import { useState } from 'react';
-import { useCurrentAccount, useSignAndExecuteTransaction } from '@mysten/dapp-kit-react';
+import { useCurrentAccount } from '@mysten/dapp-kit-react';
 import { Transaction } from '@mysten/sui/transactions';
 import { Plus, Loader2 } from 'lucide-react';
 import { CONFIG } from '@/lib/config';
@@ -52,8 +54,9 @@ export function PublishButton({ onSuccess }: PublishButtonProps) {
         ],
       });
 
-      const result = await dAppKit.signAndExecuteTransaction({
-        transaction: tx,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = await (dAppKit as any).signAndExecuteTransaction({
+        transaction: tx as any,
       });
 
       if (result && 'digest' in result) {

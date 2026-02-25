@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useCurrentAccount } from '@mysten/dapp-kit-react';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui/client';
 import { Navbar } from '@/components/Navbar';
 import { Hero } from '@/components/Hero';
 import { EpisodeList } from '@/components/EpisodeList';
@@ -10,7 +11,9 @@ import { About } from '@/components/About';
 import { Footer } from '@/components/Footer';
 import { AudioPlayer } from '@/components/AudioPlayer';
 import { CONFIG, Episode, NovaIdentity } from '@/lib/config';
-import { dAppKit } from '@/lib/dapp-kit';
+
+// Create SuiClient directly for queries
+const suiClient = new SuiClient({ url: getFullnodeUrl('testnet') });
 
 export default function Home() {
   const currentAccount = useCurrentAccount();
@@ -40,8 +43,7 @@ export default function Home() {
   }
 
   async function loadEpisodes() {
-    const client = dAppKit.getClient();
-    const registry = await client.getObject({
+    const registry = await suiClient.getObject({
       id: CONFIG.registryId,
       options: { showContent: true },
     });
@@ -61,7 +63,7 @@ export default function Home() {
       const episodeId = entry.value;
       
       try {
-        const episodeObj = await client.getObject({
+        const episodeObj = await suiClient.getObject({
           id: episodeId,
           options: { showContent: true },
         });
@@ -99,8 +101,7 @@ export default function Home() {
   }
 
   async function loadIdentity() {
-    const client = dAppKit.getClient();
-    const identity = await client.getObject({
+    const identity = await suiClient.getObject({
       id: CONFIG.identityId,
       options: { showContent: true },
     });
