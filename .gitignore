@@ -1,12 +1,29 @@
-# Sui Move build artifacts
-build/
+# Dependencies
+node_modules
+.pnp
+.pnp.js
 
-# Move lock file (optional, can commit if desired)
-# Move.lock
+# Build outputs
+.next
+out
+dist
+build
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # IDE
-.idea/
-.vscode/
+.vscode
+.idea
 *.swp
 *.swo
 
@@ -14,5 +31,5 @@ build/
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Vercel
+.vercel
