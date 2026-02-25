@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 import { useState } from 'react';
 import { useCurrentAccount } from '@mysten/dapp-kit-react';
 import { Transaction } from '@mysten/sui/transactions';
