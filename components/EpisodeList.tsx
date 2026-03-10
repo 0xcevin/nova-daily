@@ -1,6 +1,6 @@
 'use client';
 
-import { RefreshCw, Play, ExternalLink, Mic, AlertCircle } from 'lucide-react';
+import { RefreshCw, Play, ExternalLink, Mic, AlertCircle, ChevronRight } from 'lucide-react';
 import { Episode } from '@/lib/config';
 import { PublishButton } from './PublishButton';
 
@@ -30,6 +30,13 @@ export function EpisodeList({ episodes, loading, error, onRefresh, onPlay }: Epi
             <p className="text-nova-muted">从 Sui 区块链实时读取的播客内容</p>
           </div>
           <div className="flex items-center gap-2">
+            <a
+              href="/episodes"
+              className="flex items-center gap-2 px-4 py-2 glass-card hover:bg-white/10 text-nova-text rounded-full text-sm font-medium transition-colors"
+            >
+              查看全部
+              <ChevronRight className="w-4 h-4" />
+            </a>
             <PublishButton onSuccess={onRefresh} />
             <button
               onClick={onRefresh}
